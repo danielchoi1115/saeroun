@@ -24,3 +24,5 @@ package-lock.json
 activate.sh
 test.py
 apitest.py
+.node_repl_history
+.vscode
