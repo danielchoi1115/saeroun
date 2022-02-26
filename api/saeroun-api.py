@@ -35,13 +35,6 @@ def get_description(return_code):
     if not description:
         description = API_RETURN_CODE_DESC[-1]
     return description
-# class userHandler(Resource):
-#     def get(self, email):
-#         result = user_collection.find_one({LIT.EMAIL: email})
-#         if result == None:
-#             return {}
-#         print(result)
-#         return json.loads(json_util.dumps(result))
 
 class register(Resource):
     def post(self):
@@ -109,11 +102,6 @@ class login(Resource):
                 LIT.DATA: to_json(result)
         }
             
-# api.add_resource(Video, "/video/<int:id>")
-# def abort_if_id_doesnt_exist(id):
-#     if id not in videos:
-#         abort(404, message="Video id is not valid")
-
 api.add_resource(register, "/register")
 api.add_resource(login, "/login")
 
