@@ -3060,3 +3060,12 @@ test/arg_parser.py
 test/literal.py
 test/__pycache__/arg_parser.cpython-310.pyc
 test/__pycache__/literal.cpython-310.pyc
+test/userSchema
+test/apitest.py
+test/testfile.py
+test/lib/arg_parser.py
+test/lib/common.py
+test/lib/config.py
+test/lib/error_handler.py
+test/lib/literal.py
+test/lib/query_handler.py
