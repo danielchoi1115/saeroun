@@ -1,0 +1,20 @@
+// table users
+// users
+{
+    "_id": "",
+    "type": "student",
+    "name": "김김김",
+    "email": "abc@gmail.com",
+    "auth_string" : "",
+    "regDate": "2019-11-20"
+    
+}
+
+// classroom
+{   
+    "_id": "",
+    "classname": "",
+    "students": [
+
+    ]
+}
