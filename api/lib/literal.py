@@ -28,7 +28,7 @@ class LIT:
     # MONGO KEYWORD
     INSERT_ONE = 'insert_one'
     FIND_ONE = 'find_one'
-    
+
 API_RETURN_CODE_DESC = {
     -1: 'Unknown Code',
     
