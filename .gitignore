@@ -3069,3 +3069,13 @@ test/lib/config.py
 test/lib/error_handler.py
 test/lib/literal.py
 test/lib/query_handler.py
+.cache/motd.legal-displayed
+.ssh/authorized_keys
+.ssh/known_hosts
+test/lib/__pycache__/arg_parser.cpython-310.pyc
+test/lib/__pycache__/common.cpython-310.pyc
+test/lib/__pycache__/config.cpython-310.pyc
+test/lib/__pycache__/error_handler.cpython-310.pyc
+test/lib/__pycache__/literal.cpython-310.pyc
+test/lib/__pycache__/query_handler.cpython-310.pyc
+.Xauthority
