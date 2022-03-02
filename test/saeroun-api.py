@@ -4,9 +4,9 @@ from flask_restful import Api, Resource
 
 
 from lib.arg_parser import REGISTER_ARGS_PARSER, LOGIN_ARGS_PARSER
-from lib.common import to_json
+from lib.common import to_json, get_description
 
-from lib.literal import LIT, API_RETURN_CODE_DESC
+from lib.literal import LIT
 
 import sys
 
@@ -14,14 +14,6 @@ from lib.query_handler import find_from_email, mongo_query
 
 app = Flask(__name__)
 api = Api(app)
-
-
-def get_description(return_code):
-    description = API_RETURN_CODE_DESC.get(return_code)
-    if not description:
-        description = API_RETURN_CODE_DESC[-1]
-    return description
-
 
 class user(Resource):
     def post(self, keyword):
