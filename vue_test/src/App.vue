@@ -1,20 +1,35 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <h1>{{ title }}</h1>
+  <input type="text" ref="name" />
+  <button @click="handleClick">Click me</button>
+
+  <Test :header="header" :text="text"/>
+
 </template>
 
 <script>
+import Test from './components/Test.vue';
 
 export default {
-  name: 'App',
-  components: {
-    
-  }
-
-}
+  name: "App", 
+  components: { Test },
+  
+  data() {
+    return {
+      title: "My First Vue App",
+      header: "Sign up bro!" ,
+      text: "Save your time!!!",
+    };
+  },
+  methods: {
+    handleClick() {
+      console.log(this.$refs.name);
+      this.$refs.name.classList.add("active");
+      this.$refs.name.focus();
+    },
+  },
+  
+};
 </script>
 
 <style>
@@ -37,5 +52,11 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+h1 {
+  border-bottom: 1px solid #ddd;
+  display: inline-block;
+  padding-bottom: 10px;
 }
 </style>
