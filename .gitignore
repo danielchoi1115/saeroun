@@ -3,6 +3,8 @@ __pycache__/
 .ssh/
 .vscode-server/
 .cache/
+node_modules/
+.npm/
 
 .wget-hsts
 .bash_history
@@ -10,3 +12,6 @@ __pycache__/
 .gitconfig
 docker-compose.yml
 config.py
+.sudo_as_admin*
+package.json
+package-lock.json
