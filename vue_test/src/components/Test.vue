@@ -1,8 +1,10 @@
 <template>
-  <div class="backdrop">
+  <div class="backdrop" @click.self="closeModal">
     <div class="modal">
-      <h1> {{ header }} </h1>
-      <p> {{ text }} </p>
+      <slot>default</slot>
+      <div class="action">
+        <slot name="links"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -10,7 +12,13 @@
 <script>
 
 export default{
-  props: ['header', 'text']
+  props: [],
+
+  methods: {
+    closeModal() {
+      this.$emit('close')
+    }
+  }
 }
 </script>
 

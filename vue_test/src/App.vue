@@ -1,9 +1,25 @@
 <template>
   <h1>{{ title }}</h1>
   <input type="text" ref="name" />
-  <button @click="handleClick">Click me</button>
 
-  <Test :header="header" :text="text"/>
+  <teleport to=".modals" v-if="showModal">
+    <Test @close="toggleModal">
+      <template v-slot:links>
+        <a href="#">Sign up now</a>
+        <a href="#">More info</a>
+      </template>
+    </Test>
+  </teleport>
+
+  <teleport to=".modals" v-if="showModalTwo">
+    <Test @close="toggleModalTwo">
+      <h1>Sign Up to the newsletter</h1>
+    </Test>
+  </teleport>
+  
+  <button @click="handleClick">Click me</button>
+  <button @click="toggleModal">Show Modal</button>
+  <button @click="toggleModalTwo">Show ModalTwo</button>
 
 </template>
 
@@ -17,8 +33,8 @@ export default {
   data() {
     return {
       title: "My First Vue App",
-      header: "Sign up bro!" ,
-      text: "Save your time!!!",
+      showModal: false,
+      showModalTwo: false
     };
   },
   methods: {
@@ -26,6 +42,12 @@ export default {
       console.log(this.$refs.name);
       this.$refs.name.classList.add("active");
       this.$refs.name.focus();
+    },
+    toggleModal() {
+      this.showModal = !this.showModal
+    },
+    toggleModalTwo() {
+      this.showModalTwo = !this.showModalTwo
     },
   },
   
