@@ -19,7 +19,7 @@ def get_description(return_code):
             102: 'Password confirmation failed',
             104: 'Incorrect email or password',
             
-            201: 'Post Successful',
+            201: 'Register Successful',
             202: 'Login Successful',
         }[return_code]
     except:

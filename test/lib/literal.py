@@ -10,15 +10,15 @@ class LIT:
     # API
     FAILED = 'failed'
     SUCCESS = 'success'
-    API_RETURN_CODE = 'api_return_code'
-    API_RESULT = 'api_result'
+    API_RETURN_CODE = 'return_code'
+    API_RESULT = 'result'
     DESCRIPTION = 'description'
     DATA = 'data'
     ERROR = 'error'
     
     # POST DATA LITERAL
     EMAIL = 'email'
-    NAME = 'name'
+    STUDENT_NAME = 'student_name'
     PASSWORD_CONFIRM = 'password_confirm'
     
     # MONGO
