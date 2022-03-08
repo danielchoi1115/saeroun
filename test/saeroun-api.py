@@ -1,7 +1,7 @@
 from ast import Raise
 from flask import Flask, jsonify
 from flask_restful import Api, Resource
-
+from flask_cors import CORS
 
 from lib.arg_parser import REGISTER_ARGS_PARSER, LOGIN_ARGS_PARSER
 from lib.common import to_json, get_description
@@ -13,7 +13,12 @@ import sys
 from lib.query_handler import find_from_email, mongo_query
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 api = Api(app)
+
+CORS(app, resources={r"/*": {"origins": "http://172.30.1.100:8080"}})
 
 class user(Resource):
     def post(self, keyword):
@@ -67,7 +72,7 @@ def user_post_new(args):
         # insert user data
         query_result = mongo_query(collection=LIT.USER, type=LIT.INSERT_ONE, data=args)
         # Successfully Registered
-        api_result = LIT.SUCCESS,
+        api_result = LIT.SUCCESS
         return_code = 201
         # remove password confirmation data
         del(args[LIT.PASSWORD_CONFIRM])
@@ -85,5 +90,5 @@ def user_post_new(args):
 api.add_resource(user, "/api/user/<string:keyword>")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5001)
+    app.run(host='0.0.0.0', debug=True, port=5002)
     
