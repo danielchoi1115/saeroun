@@ -2,8 +2,8 @@ from flask import Flask, jsonify
 from flask_restful import Api, Resource
 
 from lib.arg_parser import REGISTER_ARGS_PARSER, LOGIN_ARGS_PARSER
-from lib.common import to_json
-from lib.literal import LIT, get_description
+from lib.common import to_json, get_description
+from lib.literal import LIT
 from lib.query_handler import find_from_email, mongo_query
 
 app = Flask(__name__)
@@ -79,5 +79,5 @@ def user_post_new(args):
 api.add_resource(user, "/api/user/<string:keyword>")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5001)
+    app.run(host='0.0.0.0', debug=True, port=5000)
     
