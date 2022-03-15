@@ -1,11 +1,13 @@
 venv-api/
 __pycache__/
 .ssh/
+.local/
+.config/
 .vscode-server/
 .cache/
 node_modules/
 .npm/
-
+non_requirements.txt
 .wget-hsts
 .bash_history
 .Xauthority
@@ -15,3 +17,5 @@ config.py
 .sudo_as_admin*
 package.json
 package-lock.json
+.viminfo
+.vuerc
