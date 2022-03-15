@@ -2,6 +2,7 @@
 node_modules
 /dist
 
+/ssl
 
 # local env files
 .env.local

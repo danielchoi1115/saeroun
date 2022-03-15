@@ -1,8 +1,9 @@
 import axios from 'axios'
-import Constants from './confidentials'
+// import Constants from './confidentials'
 
 const instance = axios.create({
-  baseURL: Constants.BASEURL,
+  // baseURL: Constants.BASEURL,
+  withCredentials: true,
   timeout: 5000,
 })
 

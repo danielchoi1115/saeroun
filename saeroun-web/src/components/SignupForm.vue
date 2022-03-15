@@ -10,7 +10,7 @@
     <input type="password" required v-model="password" />
 
     <label>Confirm Password</label>
-    <input type="password_confirm" required v-model="password_confirm" />
+    <input type="password" required v-model="password_confirm" />
 
     <div class="submit">
       <button>Sign Up</button>
@@ -18,7 +18,7 @@
   </form>
   <p>Email: {{ email }}</p>
   <p>Password: {{ password }}</p>
-  <p>Password: {{ password_confirm }}</p>
+  <p>Password_confirm: {{ password_confirm }}</p>
 </template>
 
 <script>
@@ -46,7 +46,7 @@ export default {
           console.log(response.data)
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.response.data)
         })
     },
   },

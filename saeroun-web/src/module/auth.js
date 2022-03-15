@@ -6,7 +6,6 @@ export async function login(email, password) {
     password,
   })
 }
-
 export async function signup(email, student_name, password, password_confirm) {
   return http.post('/api/user/new', {
     email,
