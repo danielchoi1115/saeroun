@@ -1,94 +1,108 @@
-from ast import Raise
-from flask import Flask, jsonify
+# dependencies
+from flask import Flask, make_response, request, redirect
 from flask_restful import Api, Resource
 from flask_cors import CORS
 
-from lib.arg_parser import REGISTER_ARGS_PARSER, LOGIN_ARGS_PARSER
-from lib.common import to_json, get_description
+# built-in
+# import ssl
 
+# Custom
+from lib.arg_parser import argparser
+from lib.common import get_description
+from lib.config import confidential
 from lib.literal import LIT
+from lib.query_handler import find_user_by_email, mongo_query
+from lib.auth import YellowToken
 
-import sys
-
-from lib.query_handler import find_from_email, mongo_query
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
+app.config['SECRET_KEY'] = confidential.API_SECRET_KEY
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api = Api(app)
+# , resources={r"*": {"origins": "*"}}
 
-CORS(app, resources={r"/*": {"origins": "http://172.30.1.100:8080"}})
+CORS(app, resources={r"*": {"origins": '175.194.158.210'}})
+
 
 class user(Resource):
     def post(self, keyword):
         if keyword == LIT.AUTH:
-            args = LOGIN_ARGS_PARSER.parse_args() # Parse post data
-            return user_post_auth(args)
-        
+            args = argparser.login.parse_args()  # Parse post data
+            result, status_code = user_post_auth(args)
+            res = make_response(result[LIT.API_RESULT], status_code)
+
+            if status_code == 200:
+                res.set_cookie(
+                    key=LIT.ACCESS_TOKEN,
+                    value=result[LIT.ACCESS_TOKEN],
+                    httponly=True,
+                    domain='175.194.158.210',
+                )
+            return res
         elif keyword == LIT.NEW:
-            args = REGISTER_ARGS_PARSER.parse_args() # Parse post data
+            args = argparser.register.parse_args()  # Parse post data
             return user_post_new(args)
-        
+
+
 def user_post_auth(args):
-    # Check if email can be used
-    query_result = find_from_email(args[LIT.EMAIL])
-    # Could’t find email
-    if query_result is None:
-        api_result = LIT.FAILED
-        return_code = 104
-    # if password confirmation failed
-    else:
-        user_input = args[LIT.PASSWORD]
-        password = query_result[LIT.PASSWORD]
-        # is password doesn't match
-        if user_input != password:
-            api_result = LIT.FAILED
-            return_code = 104
-            query_result = None
-        else:
-            api_result = LIT.SUCCESS
-            return_code = 202 # Login Successful
+    # Get the info by email
+    query_result = find_user_by_email(args[LIT.EMAIL])
+
+    # Could’t find email or password does not match
+    if (not query_result) or (args[LIT.PASSWORD] != query_result[LIT.PASSWORD]):
+        return {
+            LIT.API_RESULT: LIT.FAILED,
+            LIT.DESCRIPTION: get_description(104),  # Incorrect email or password
+        }, 401  # Unauthorized
+
+    yellowtoken = YellowToken()
     return {
-            LIT.API_RESULT : api_result,
-            LIT.API_RETURN_CODE: return_code,
-            LIT.DESCRIPTION: get_description(return_code),
-            # LIT.DATA: to_json(query_result)
-    }
+        LIT.API_RESULT: LIT.SUCCESS,
+        LIT.DESCRIPTION: get_description(202),  # Login Successful
+        LIT.ACCESS_TOKEN: yellowtoken.create_token(data=query_result['_id'])
+    }, 200  # HTTP OK
+
 
 def user_post_new(args):
     # Check if email can be used
-    query_result = find_from_email(args[LIT.EMAIL])
+    query_result = find_user_by_email(args[LIT.EMAIL])
 
-    # if email is already in use
-    if query_result != None:
-        api_result = LIT.FAILED
-        return_code = 101 
-    # if password confirmation failed
-    elif args[LIT.PASSWORD] != args[LIT.PASSWORD_CONFIRM]:
-        api_result = LIT.FAILED
-        return_code = 102 
-    else:
+    # if email is available
+    if not query_result:
         # insert user data
+        del(args[LIT.PASSWORD_CONFIRM])  # no need to input confirm password data
         query_result = mongo_query(collection=LIT.USER, type=LIT.INSERT_ONE, data=args)
         # Successfully Registered
-        api_result = LIT.SUCCESS
-        return_code = 201
-        # remove password confirmation data
-        del(args[LIT.PASSWORD_CONFIRM])
-        
-    api_return = {
-            LIT.API_RESULT : api_result,
-            LIT.API_RETURN_CODE: return_code,
-            LIT.DESCRIPTION: get_description(return_code),
-            LIT.DATA: to_json(args)
-    }
-    
-    return api_return
+        return {
+            LIT.API_RESULT: LIT.SUCCESS,
+            LIT.DESCRIPTION: get_description(201),  # Sign in Successful
+        }, 201  # POST Successful
+
+    else:
+        return {
+            LIT.API_RESULT: LIT.FAILED,
+            LIT.DESCRIPTION: get_description(101)  # email already in use
+        }, 401  # Unauthrorized
 
 
 api.add_resource(user, "/api/user/<string:keyword>")
 
+# @app.before_request
+# def before_request():
+#     if request.url.startswith('http://'):
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
+
+
+@app.route('/api/haha')
+def haha():
+    return 'hello'
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5002)
-    
+    # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    # ssl_context.load_cert_chain(certfile='/usr/share/saeroun/saeroun-web/ssl/domain.com.crt', keyfile='/usr/share/saeroun/saeroun-web/ssl/domain.com.key', password='tmdfuf3752!')
+    # app.run(host='0.0.0.0', debug=True, port=5002, ssl_context=ssl_context)
+    app.run(host='127.0.0.1', debug=True, port=5002)
