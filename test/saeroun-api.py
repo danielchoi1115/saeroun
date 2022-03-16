@@ -30,16 +30,16 @@ class user(Resource):
         if keyword == LIT.AUTH:
             args = argparser.login.parse_args()  # Parse post data
             result, status_code = user_post_auth(args)
-            res = make_response(result[LIT.API_RESULT], status_code)
-
-            if status_code == 200:
-                res.set_cookie(
-                    key=LIT.ACCESS_TOKEN,
-                    value=result[LIT.ACCESS_TOKEN],
-                    httponly=True,
-                    domain='175.194.158.210',
-                )
-            return res
+            # res =
+            # if status_code == 200:
+            #     res.set_cookie(
+            #         key=LIT.ACCESS_TOKEN,
+            #         value=result[LIT.ACCESS_TOKEN],
+            #         httponly=True,
+            #         domain='175.194.158.210',
+            #     )
+            if LIT.ACCESS_TOKEN in result:
+                return make_response(result, status_code)
         elif keyword == LIT.NEW:
             args = argparser.register.parse_args()  # Parse post data
             return user_post_new(args)
