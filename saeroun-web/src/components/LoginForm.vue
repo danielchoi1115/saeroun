@@ -1,10 +1,10 @@
 <template>
-  <form @submit.prevent="signup">
+  <form @submit.prevent="signin">
     <label>Email</label>
-    <input type="email" required v-model="email" />
+    <input v-model="email" type="email" required />
 
     <label>Password</label>
-    <input type="password" required v-model="password" />
+    <input v-model="password" type="password" required />
 
     <div class="submit">
       <button>Login</button>
@@ -15,8 +15,7 @@
 </template>
 
 <script>
-import * as authApi from '@/module/auth'
-
+import * as authApi from '@/api/auth'
 export default {
   data() {
     return {
@@ -25,9 +24,9 @@ export default {
     }
   },
   methods: {
-    signup() {
+    signin() {
       authApi
-        .login(this.email, this.password)
+        .signin(this.email, this.password)
         .then(response => {
           console.log(response.data)
         })

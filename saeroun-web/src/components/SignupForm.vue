@@ -1,16 +1,16 @@
 <template>
   <form @submit.prevent="signup">
     <label>Email</label>
-    <input type="email" required v-model="email" />
+    <input v-model="email" type="email" required />
 
     <label>Name</label>
-    <input type="student_name" required v-model="student_name" />
+    <input v-model="student_name" type="student_name" required />
 
     <label>Password</label>
-    <input type="password" required v-model="password" />
+    <input v-model="password" type="password" required />
 
     <label>Confirm Password</label>
-    <input type="password" required v-model="password_confirm" />
+    <input v-model="password_confirm" type="password" required />
 
     <div class="submit">
       <button>Sign Up</button>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import * as authApi from '@/module/auth'
+import * as authApi from '@/api/auth'
 
 export default {
   data() {

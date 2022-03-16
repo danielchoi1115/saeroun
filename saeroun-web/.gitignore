@@ -25,3 +25,8 @@ pnpm-debug.log*
 
 # confidentials (Should not be pushed)
 confidentials.js
+
+# config files
+.editorconfig
+.browserslistrc
+vue.config.js
