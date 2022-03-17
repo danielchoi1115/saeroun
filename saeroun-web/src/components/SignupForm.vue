@@ -36,12 +36,7 @@ export default {
   methods: {
     signup() {
       authApi
-        .signup(
-          this.email,
-          this.student_name,
-          this.password,
-          this.password_confirm,
-        )
+        .post_user(this.$data)
         .then(response => {
           console.log(response.data)
         })

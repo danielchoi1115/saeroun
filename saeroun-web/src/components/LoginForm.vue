@@ -26,7 +26,7 @@ export default {
   methods: {
     signin() {
       authApi
-        .signin(this.email, this.password)
+        .post_user(this.$data)
         .then(response => {
           console.log(response.data)
         })
