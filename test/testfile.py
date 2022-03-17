@@ -1,7 +1,12 @@
-import json
-from bson import json_util
 
-def to_json(data):
-    return json.loads(json_util.dumps(data))
 
-print(to_json({1:'a'}))
+def return_five():
+    return 5
+
+
+def pprr(text):
+    print(text)
+
+a = {}
+
+pprr()

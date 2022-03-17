@@ -1,10 +1,10 @@
 import requests
 
-BASE = "http://172.30.1.100:5001"
+BASE = "http://127.0.0.1:5002"
 
 # data = {
 #     "email": "schoaik@connect.hk",
-#     "name": "haha", 
+#     "name": "haha",
 #     "password": "pass",
 #     "password_confirm": "pass"
 #     }
@@ -14,6 +14,6 @@ BASE = "http://172.30.1.100:5001"
 data = {
     "email": "schoaik@connect.hk",
     "password": "pass",
-    }
-response = requests.post(BASE + "/api/user/auth", data)
+}
+response = requests.post(url=BASE + "/api/user", data=data, headers={'Authorization': 'Bearer: '})
 print(response.text)
