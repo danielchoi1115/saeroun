@@ -1,7 +1,6 @@
 # Literal Class
 
 class LIT:
-
     # API Keyword
     NEW = 'new'
     PROPERTY = 'property'
@@ -15,11 +14,10 @@ class LIT:
     DESCRIPTION = 'description'
     DATA = 'data'
     ERROR = 'error'
-
+    AUTHORIZATION = 'Authorization'
     # AUTH
     TOKEN = 'token'
     ACCESS_TOKEN = 'access_token'
-    REFRESH_TOKEN = 'refresh_token'
     EXP = 'exp'
 
     # POST DATA LITERAL
