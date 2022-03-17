@@ -20,3 +20,7 @@ package-lock.json
 .viminfo
 .vuerc
 .vim/
+
+activate.sh
+testfile.py
+apitest.py
