@@ -41,7 +41,11 @@ export default {
           console.log(response.data)
         })
         .catch(error => {
-          console.log(error.response.data)
+          if ('validation' in error) {
+            console.log(error.validation)
+          } else {
+            console.log(error.response.data)
+          }
         })
     },
   },
