@@ -60,32 +60,26 @@ class user(Resource):
         data = {}
 
         # if user does not exist
-        if not query_result:
-            # and if student name is given, create user
-            if student_name:
-                data['info'] = 'Create a new user'
-            # if student name is not given (if only email and password is given)
-            # redirect to sign up page
-            elif password:
-                data['info'] = 'Email or password wrong'
-        # if user already exist
-        else:
+        if query_result:
             if student_name:
                 data['info'] = 'User already exist'
+            elif query_result['password'] == password:
+                data['info'] = 'Return Tokens'
+                data['access_token'] = create_access_token(identity={'email': email})
+                data['refresh_token'] = create_refresh_token(identity=email)
             else:
-                # if user authentication is valid
-                if query_result['password'] == password:
-                    data['info'] = 'Return Tokens'
-                    data['access_token'] = create_access_token(identity={'email': email})
-                    data['refresh_token'] = create_refresh_token(identity=email)
-                else:
-                    data['info'] = 'Email or password wrong'
+                data['info'] = 'Email or password wrong'
 
-        #   return token (sign in)
-        # if no user exist:
-        #   redirects to the sign up page.
-        # with extra information:
-        #   creates a new user (sign up)
+        elif student_name:
+            args = {
+                'email': email,
+                'student_name': student_name,
+                'password': password
+            }
+            query_result = mongo_query(collection=LIT.USER, type=LIT.INSERT_ONE, data=args)
+            data['info'] = 'Create a new user'
+        elif password:
+            data['info'] = 'Email does not exist'
 
         response = make_response(data, 200)
         if 'access_token' in data:
@@ -95,17 +89,12 @@ class user(Resource):
 
         return response
 
-        # return post_user(args)
-
 
 def post_user(args):
 
     # Get the info by email
     query_result = find_user_by_email(args[LIT.EMAIL])
     matched = args[LIT.PASSWORD] == query_result[LIT.PASSWORD]
-
-    # if user exist:
-    #     return token (sign in)
 
     # case 1 - user exist
     if query_result and matched:

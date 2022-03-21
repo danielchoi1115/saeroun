@@ -12,7 +12,6 @@ class argparser():
         user.add_argument(LIT.PASSWORD, type=str, help="", required=True)
         user.add_argument(LIT.PASSWORD_CONFIRM, type=str, help="")
         user.add_argument(LIT.AUTHORIZATION, location='headers')
-        print(user.parse_args())
         return user.parse_args()
 
 
