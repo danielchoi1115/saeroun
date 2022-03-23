@@ -22,5 +22,5 @@ package-lock.json
 .vim/
 
 activate.sh
-testfile.py
+test.py
 apitest.py
