@@ -3,7 +3,7 @@ import hashlib
 import json
 from bson import json_util
 
-# custom 
+# custom
 from lib.literal import LIT
 
 
@@ -15,7 +15,7 @@ def to_json(data):
     return json.loads(json_util.dumps(data))
 
 
-def to_bytes(text):
+def toBytes(text):
     return bytes(text, LIT.UTF8) if type(text) != bytes else text
 
 
