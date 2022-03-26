@@ -10,7 +10,7 @@
 import LoginForm from '@/components/LoginForm.vue'
 
 export default {
-  name: 'HomeView',
+  name: 'LoginView',
   components: {
     LoginForm,
   },

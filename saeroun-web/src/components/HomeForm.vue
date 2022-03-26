@@ -1,19 +1,4 @@
-<template>
-  <!-- <form @submit.prevent="signin"> -->
-  <form>
-    <label>Email</label>
-    <input type="email" required />
-
-    <label>Name</label>
-    <input type="name" required />
-
-    <div class="submit">
-      <button>Get User Info</button>
-    </div>
-  </form>
-  <p>Email: {{ email }}</p>
-  <p>Name: {{ name }}</p>
-</template>
+<template><p>hi</p></template>
 
 <script>
 export default {
@@ -21,6 +6,7 @@ export default {
     return {
       email: '',
       name: '',
+      password: '',
     }
   },
   methods: {

@@ -4,11 +4,17 @@
     <h1>This is Saeroun English</h1>
     <p>hi</p>
   </div>
+  <HomeForm />
 </template>
 
 <script>
 // @ is an alias to /src
+import HomeForm from '@/components/HomeForm.vue'
+
 export default {
-  methods: {},
+  name: 'HomeView',
+  components: {
+    HomeForm,
+  },
 }
 </script>
