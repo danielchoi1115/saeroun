@@ -10,7 +10,7 @@ from flask_jwt_extended import (
 
 # Custom
 from lib.arg_parser import argparser
-from lib.common import get_description
+from lib.common import to_json, convert_oid_for_mongo
 from lib.config import appconfig
 from lib.literal import LIT
 from lib.query_handler import YellowMongo
@@ -25,26 +25,16 @@ CORS(app, resources={r"*": {"origins": '172.30.1.100:8080'}}, supports_credentia
 
 
 class user(Resource):
-    # def get(self):
-    #     # with token:
-    #     #   return user information (only for the teacher)
-
-    #     # without token:
-    #     #   return invalid operation
-
-    #     # args = argparser.post_user.parse_args()  # Parse post data
-    #     # result, status_code = post_user(args)
-    #     # if LIT.ACCESS_TOKEN in result:
-    #     #     return make_response(result, status_code)
-    #     access_token = create_access_token(identity='haha'),
-    #     refresh_token = create_refresh_token(identity='hoho')
-    #     resp = {'login': True}
-    #     set_access_cookies(resp, access_token)
-    #     set_refresh_cookies(resp, refresh_token)
-    #     return {
-    #         "access": access_token,
-    #         "refresh": refresh_token
-    #     }
+    @jwt_required()
+    def get(self):
+        # with token:
+        print(get_jwt_identity())
+        oid = convert_oid_for_mongo(get_jwt_identity())
+        print(oid)
+        query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.FIND_ONE, data=oid)
+        response = make_response(to_json(query_result), 200)
+        return response
+        #   return user information (only for the teacher)
 
     def post(self):
 
@@ -56,93 +46,55 @@ class user(Resource):
 
         # check if arg.email is there:
 
-        data = {}
+        userdata = {}
         # if user does not exist
-        query_result = mongo.find_user_by_email(args[LIT.EMAIL])
+        data = {'email': email}
+        projection = {
+            'password': True,
+            '_id': True
+        }
+        query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.FIND_ONE, data=data, projection=projection)
         if query_result:
             # 이 기능은 프론트에서 대신할 예정이지만
             if student_name:
-                data['info'] = 'User already exist'
+                userdata['info'] = 'User already exist'
             elif Bcrypter.validate_password(target=password, source=query_result['password']):
-                data['info'] = 'Return Tokens'
-                data['access_token'] = create_access_token(identity={'email': email})
-                data['refresh_token'] = create_refresh_token(identity=email)
+                userdata['info'] = 'Return Tokens'
+                info = {'_id': query_result['_id']}
+                userdata['access_token'] = create_access_token(identity=info)
+                userdata['refresh_token'] = create_refresh_token(identity=info)
             else:
-                data['info'] = 'Email or password wrong'
-
+                userdata['info'] = 'Email or password wrong'
         elif student_name:
             args = {
                 'email': email,
                 'student_name': student_name,
                 'password': Bcrypter.hash_password(password)
             }
-            query_result = mongo.mongo_query(collection=LIT.USER, type=LIT.INSERT_ONE, data=args)
-            data['info'] = 'Create a new user'
+            query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.INSERT_ONE, data=args)
+            userdata['info'] = 'Create a new user'
         elif password:
-            data['info'] = 'Email does not exist'
+            userdata['info'] = 'Email does not exist'
 
-        response = make_response(data, 200)
-        if 'access_token' in data:
-            set_access_cookies(response, data['access_token'])
-        if 'refresh_token' in data:
-            set_refresh_cookies(response, data['refresh_token'])
+        response = make_response(userdata, 200)
+        if 'access_token' in userdata:
+            set_access_cookies(response, userdata['access_token'])
+        if 'refresh_token' in userdata:
+            set_refresh_cookies(response, userdata['refresh_token'])
 
         return response
 
 
-# def post_user(args):
-#     mongo = YellowMongo()
-#     # Get the info by email
-#     query_result = mongo.find_user_by_email(args[LIT.EMAIL])
-#     matched = args[LIT.PASSWORD] == query_result[LIT.PASSWORD]
-
-#     # case 1 - user exist
-#     if query_result and matched:
-#         return {
-#             LIT.API_RESULT: LIT.SUCCESS,
-#             LIT.DESCRIPTION: get_description(202),  # Login Successful
-#             # LIT.ACCESS_TOKEN: YellowToken().create_token(data=query_result['_id'])
-#         }, 200  # HTTP OK
-#     elif not matched:
-#         return {
-#             LIT.API_RESULT: LIT.FAILED,
-#             LIT.DESCRIPTION: get_description(104),  # Incorrect email or password
-#         }, 401  # Unauthorized
-    # elif user not exist:
-    #     if 4 args are given
-    #         creates a new user (sign up)
-
-    #     else (only email and password sent:)
-    #         redirects to the sign up page.
-
-    # Could’t find email or password does not match
-    # if (not query_result) or (args[LIT.PASSWORD] != query_result[LIT.PASSWORD]):
-
-
-# def get_user(args):
-#     # Check if email can be used
-#     query_result = find_user_by_email(args[LIT.EMAIL])
-
-#     # if email is available
-#     if not query_result:
-#         # insert user data
-#         del(args[LIT.PASSWORD_CONFIRM])  # no need to input confirm password data
-#         query_result = mongo_query(collection=LIT.USER, type=LIT.INSERT_ONE, data=args)
-#         # Successfully Registered
-#         return {
-#             LIT.API_RESULT: LIT.SUCCESS,
-#             LIT.DESCRIPTION: get_description(201),  # Sign in Successful
-#         }, 201  # POST Successful
-
-#     else:
-#         return {
-#             LIT.API_RESULT: LIT.FAILED,
-#             LIT.DESCRIPTION: get_description(101)  # email already in use
-#         }, 401  # Unauthrorized
+class verification_token(Resource):
+    @jwt_required(refresh=True)
+    def get(self):
+        identity = get_jwt_identity()
+        access_token = create_access_token(identity=identity)
+        return jsonify(access_token=access_token)
 
 
 api.add_resource(user, "/api/user")
-
+api.add_resource(verification_token, "/api/verification/token")
 # @app.before_request
 # def before_request():
 #     if request.url.startswith('http://'):
