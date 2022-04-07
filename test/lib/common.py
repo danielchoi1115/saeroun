@@ -2,6 +2,7 @@
 import hashlib
 import json
 from bson import json_util
+from bson.objectid import ObjectId
 
 # custom
 from lib.literal import LIT
@@ -18,7 +19,9 @@ def to_json(data):
 def toBytes(text):
     return bytes(text, LIT.UTF8) if type(text) != bytes else text
 
-
+def convert_oid_for_mongo(oid):
+    oid['_id'] = ObjectId(oid['_id']['$oid'])
+    return oid
 def get_description(code):
     try:
         return {
