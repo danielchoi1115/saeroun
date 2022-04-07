@@ -8,3 +8,7 @@ export async function post_user(_data) {
   }
   return http.post('/api/user', _data)
 }
+
+export async function get_user() {
+  return http.get('/api/user')
+}
