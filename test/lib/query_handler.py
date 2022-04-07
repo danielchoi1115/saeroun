@@ -16,17 +16,19 @@ class YellowMongo:
         )
         self.db = self.client[LIT.SAEROUN]
 
-    def find_user_by_email(self, email):
-        return self.mongo_query(collection=LIT.USER, type=LIT.FIND_ONE, query={LIT.EMAIL: email})
-
-    def mongo_query(self, collection, type, **kwargs):
+    def mongo_query(self, collection, query_type, data, projection=None):
+        if projection is None:
+            projection = {
+                'password': False,
+                '_id': False
+            }
         try:
-            if type == LIT.INSERT_ONE:
-                result = self.db[collection].insert_one(kwargs[LIT.DATA])
+            if query_type == LIT.INSERT_ONE:
+                result = self.db[collection].insert_one(data)
                 return result.acknowledged
 
-            elif type == LIT.FIND_ONE:
-                result = self.db[collection].find_one(kwargs[LIT.QUERY])
+            elif query_type == LIT.FIND_ONE:
+                result = self.db[collection].find_one(data, projection)
                 return to_json(result)
 
         except Exception as ex:
