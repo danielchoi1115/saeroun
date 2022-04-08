@@ -22,7 +22,6 @@ class LIT:
 
     # POST DATA LITERAL
     EMAIL = 'email'
-    STUDENT_NAME = 'student_name'
     PASSWORD_CONFIRM = 'password_confirm'
 
     # MONGO

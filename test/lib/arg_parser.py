@@ -8,10 +8,12 @@ class argparser():
     def user(self):
         user = reqparse.RequestParser()
         user.add_argument(LIT.EMAIL, type=str, help="", required=True)
-        user.add_argument(LIT.STUDENT_NAME, type=str, help="")
-        user.add_argument(LIT.PASSWORD, type=str, help="", required=True)
+        user.add_argument(LIT.USERNAME, type=str, help="")
+        user.add_argument(LIT.PASSWORD, type=str, help="")
         user.add_argument(LIT.PASSWORD_CONFIRM, type=str, help="")
         user.add_argument(LIT.AUTHORIZATION, location='headers')
+        user.add_argument('account_type')
+        user.add_argument('check_only_email')
         return user.parse_args()
 
 
