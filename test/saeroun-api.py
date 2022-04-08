@@ -10,11 +10,10 @@ from flask_jwt_extended import (
 
 # Custom
 from lib.arg_parser import argparser
-from lib.common import to_json, convert_oid_for_mongo
+from lib.common import to_json
 from lib.config import appconfig
-from lib.literal import LIT
-from lib.query_handler import YellowMongo
-from lib.auth import Bcrypter
+from lib.APIcore import APIcore
+from lib.ResponsePacker import ResPacker
 
 app = Flask(__name__)
 app.config.from_object(appconfig)
@@ -28,59 +27,60 @@ class user(Resource):
     @jwt_required()
     def get(self):
         # with token:
-        print(get_jwt_identity())
-        oid = convert_oid_for_mongo(get_jwt_identity())
-        print(oid)
-        query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.FIND_ONE, data=oid)
-        response = make_response(to_json(query_result), 200)
-        return response
+        return make_response(to_json(core.find_user_by_id(get_jwt_identity())), 200)
         #   return user information (only for the teacher)
 
     def post(self):
-
         args = argparser().user()  # Parse post data
 
         email = args['email']
-        student_name = args['student_name']
+        username = args['username']
         password = args['password']
+        account_type = args['account_type']
+        check_only_email = args['check_only_email']
+        query_result = core.find_user_by_email(email)
+        
+        # Case 0. Check if user email exist
+        if check_only_email in ['True', 'true', True]:
+            return make_response(ResPacker.user_emailAvailabilityCheck(query_result))
 
-        # check if arg.email is there:
-
-        userdata = {}
-        # if user does not exist
-        data = {'email': email}
-        projection = {
-            'password': True,
-            '_id': True
-        }
-        query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.FIND_ONE, data=data, projection=projection)
-        if query_result:
-            # 이 기능은 프론트에서 대신할 예정이지만
-            if student_name:
-                userdata['info'] = 'User already exist'
-            elif Bcrypter.validate_password(target=password, source=query_result['password']):
-                userdata['info'] = 'Return Tokens'
-                info = {'_id': query_result['_id']}
-                userdata['access_token'] = create_access_token(identity=info)
-                userdata['refresh_token'] = create_refresh_token(identity=info)
+        # Case 1. Sign in a user
+        # Email and password should ONLY be given
+        if all([email, password]) and not username:
+            # Email Found
+            if query_result and core.isPasswordCorrect(target=password, source=query_result['password']):
+                res_body, status_code = ResPacker.user_signin_successful()
+            # Email not Found
+            elif not query_result:
+                res_body, status_code = ResPacker.user_signin_emailNotFound(email)
+            # Password is incorrect
             else:
-                userdata['info'] = 'Email or password wrong'
-        elif student_name:
-            args = {
-                'email': email,
-                'student_name': student_name,
-                'password': Bcrypter.hash_password(password)
-            }
-            query_result = mongo.mongo_query(collection=LIT.USER, query_type=LIT.INSERT_ONE, data=args)
-            userdata['info'] = 'Create a new user'
-        elif password:
-            userdata['info'] = 'Email does not exist'
+                res_body, status_code = ResPacker.user_signin_incorrectPassword()
 
-        response = make_response(userdata, 200)
-        if 'access_token' in userdata:
-            set_access_cookies(response, userdata['access_token'])
-        if 'refresh_token' in userdata:
-            set_refresh_cookies(response, userdata['refresh_token'])
+        # Case 2. Sign Up a new user
+        elif all([email, password, username]):
+            # 'Email already in use'
+            if query_result:
+                res_body, status_code = ResPacker.user_signup_emailInUse(email)
+            # Sign up the user
+            else:
+                core.insert_user(
+                    email=email,
+                    username=username,
+                    password=password,
+                    account_type=account_type
+                )
+                res_body, status_code = ResPacker.user_signup_successful()
+
+        # Case 3. email, password or username is missing
+        else:
+            res_body, status_code = ResPacker.user_missingParameter(email, password)
+
+        response = make_response(res_body, status_code)
+
+        if status_code == 200:
+            set_access_cookies(response, create_access_token(identity={'_id': query_result['_id']}))
+            set_refresh_cookies(response, create_refresh_token(identity={'_id': query_result['_id']}))
 
         return response
 
@@ -107,8 +107,6 @@ if __name__ == '__main__':
     # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     # ssl_context.load_cert_chain(certfile='/usr/share/saeroun/saeroun-web/ssl/domain.com.crt', keyfile='/usr/share/saeroun/saeroun-web/ssl/domain.com.key', password='tmdfuf3752!')
     # app.run(host='0.0.0.0', debug=True, port=5002, ssl_context=ssl_context)
-
-    mongo = YellowMongo()
-
+    core = APIcore()
     app.run(host='127.0.0.1', debug=True, port=5002)
     # app.run(host='0.0.0.0', debug=True, port=5002)
