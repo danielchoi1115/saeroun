@@ -1,11 +1,5 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-gutter-md" style="max-width: 300px">
-      <q-input v-model="email" label="Standard" />
-      <!-- https://quasar.dev/vue-components/select#using-menu-and-filtering -->
-    </div>
-  </div>
-  <form @submit.prevent="get_user">
+  <form @submit.prevent="get_user_info">
     <div class="submit">
       <button>Get User Name</button>
     </div>
@@ -17,7 +11,7 @@
 
 <script>
 import { ref } from 'vue'
-import * as authApi from '@/api/auth'
+import * as auth from '@/api/auth'
 
 export default {
   data() {
@@ -28,11 +22,12 @@ export default {
     }
   },
   methods: {
-    get_user() {
-      authApi
-        .get_user()
+    get_user_info() {
+      auth
+        .get_user_info()
         .then(response => {
           console.log(response.data)
+          this.user_name = response.data.username
         })
         .catch(error => {
           console.log(error.response.data)
