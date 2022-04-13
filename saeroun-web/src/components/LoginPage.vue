@@ -1,6 +1,6 @@
 <template>
   <div class="loginbox">
-    <form @submit.prevent="signin">
+    <form>
       <div class="q-pa-md">
         <div
           class="q-gutter-md"
@@ -23,7 +23,7 @@
           <q-input v-model="email" label="Email" type="email" :rules="[myRule]" />
           <q-input v-model="password" type="password" label="Password" />
           <div class="submit">
-            <button>Login</button>
+            <button type="submit" @click.stop.prevent="signin()">Login</button>
           </div>
         </div>
       </div>
@@ -42,7 +42,6 @@ export default {
       model: ref(''),
       myRule(val) {
         return new Promise(resolve => {
-          console.log(val)
           setTimeout(() => {
             // call
             //  resolve(true)
@@ -70,6 +69,7 @@ export default {
         .then(response => {
           console.log(response.status)
           console.log(response.data)
+          this.$router.go(this.$router.currentRoute)
         })
         .catch(error => {
           console.log(error.response.status)
