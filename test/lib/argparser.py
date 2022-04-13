@@ -3,18 +3,16 @@ from lib.literal import LIT
 import json
 
 
-class argparser():
-    @classmethod
-    def user(self):
-        user = reqparse.RequestParser()
-        user.add_argument(LIT.EMAIL, type=str, help="", required=True)
-        user.add_argument(LIT.USERNAME, type=str, help="")
-        user.add_argument(LIT.PASSWORD, type=str, help="")
-        user.add_argument(LIT.PASSWORD_CONFIRM, type=str, help="")
-        user.add_argument(LIT.AUTHORIZATION, location='headers')
-        user.add_argument('account_type')
-        user.add_argument('check_only_email')
-        return user.parse_args()
+def user():
+    user = reqparse.RequestParser()
+    user.add_argument(LIT.EMAIL, type=str, help="", required=True)
+    user.add_argument(LIT.USERNAME, type=str, help="")
+    user.add_argument(LIT.PASSWORD, type=str, help="")
+    user.add_argument(LIT.PASSWORD_CONFIRM, type=str, help="")
+    user.add_argument(LIT.AUTHORIZATION, location='headers')
+    user.add_argument('account_type')
+    user.add_argument('check_only_email')
+    return user.parse_args()
 
 
 # class argparser():
