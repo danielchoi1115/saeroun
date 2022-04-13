@@ -8,6 +8,29 @@ export async function post_user(_data) {
   return http.post('/api/user', _data)
 }
 
-export async function get_user_info() {
+export function get_user() {
   return http.get('/api/user')
+}
+
+export async function loadUserData() {
+  var result = false
+  var data = null
+  await get_user()
+    .then(response => {
+      result = true
+      data = response.data
+    })
+    .catch(error => {
+      result = false
+      data = null
+    })
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        result: result,
+        data: data,
+      })
+    }, 5)
+  })
 }
