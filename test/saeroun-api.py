@@ -9,11 +9,10 @@ from flask_jwt_extended import (
 # import ssl
 
 # Custom
-from lib.arg_parser import argparser
+from lib import argparser, ResPacker
 from lib.common import to_json
 from lib.config import appconfig
 from lib.APIcore import APIcore
-from lib.ResponsePacker import ResPacker
 
 app = Flask(__name__)
 app.config.from_object(appconfig)
@@ -31,7 +30,7 @@ class user(Resource):
         #   return user information (only for the teacher)
 
     def post(self):
-        args = argparser().user()  # Parse post data
+        args = argparser.user()  # Parse post data
 
         email = args['email']
         username = args['username']
@@ -39,7 +38,7 @@ class user(Resource):
         account_type = args['account_type']
         check_only_email = args['check_only_email']
         query_result = core.find_user_by_email(email)
-        
+
         # Case 0. Check if user email exist
         if check_only_email in ['True', 'true', True]:
             return make_response(ResPacker.user_emailAvailabilityCheck(query_result))
