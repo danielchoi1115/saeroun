@@ -27,3 +27,7 @@ class APIcore:
 
     def isPasswordCorrect(self, target, source):
         return Bcrypter.validate_password(target, source)
+
+    def findAllBooks(self):
+        # find every books containing its chapters
+        return self.mongo.mongo_query(collection='book', query_type='find_all', data={}, projection={'book_name': True, 'book_code': True, 'no_chapter': True})

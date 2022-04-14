@@ -85,6 +85,7 @@ class user(Resource):
 
 
 class verification_token(Resource):
+    # user authentication으로 변경하는게 통일성 있을듯 함
     @jwt_required(refresh=True)
     def get(self):
         identity = get_jwt_identity()
@@ -92,8 +93,16 @@ class verification_token(Resource):
         return jsonify(access_token=access_token)
 
 
+class book(Resource):
+    @jwt_required()
+    def get(self):
+        return core.findAllBooks()
+
+
 api.add_resource(user, "/api/user")
 api.add_resource(verification_token, "/api/verification/token")
+api.add_resource(book, "/api/book")
+
 # @app.before_request
 # def before_request():
 #     if request.url.startswith('http://'):
