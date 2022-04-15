@@ -8,8 +8,8 @@ class APIcore:
     def __init__(self):
         self.mongo = YellowMongo()
 
-    def find_user_by_id(self, identity):
-        return self.mongo.mongo_query(collection='user', query_type='find_one', data=convert_oid_for_mongo(identity))
+    def find_user_by_id(self, id):
+        return self.mongo.mongo_query(collection='user', query_type='find_one', data=convert_oid_for_mongo(id))
 
     def find_user_by_email(self, email):
         return self.mongo.mongo_query(collection='user', query_type='find_one', data={'email': email}, projection={'email': True, 'password': True, '_id': True})
@@ -31,3 +31,14 @@ class APIcore:
     def findAllBooks(self):
         # find every books containing its chapters
         return self.mongo.mongo_query(collection='book', query_type='find_all', data={}, projection={'book_name': True, 'book_code': True, 'no_chapter': True})
+
+    def updateUser(self, id='self', body=None):
+        # self update
+        if id == 'self':
+            # Change my info
+            print('Update user info')
+        
+        # teacher changing student's account info
+        else:
+            user = self.find_user_by_id(id)
+            # then change information given by kwargs

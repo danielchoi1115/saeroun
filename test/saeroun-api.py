@@ -25,9 +25,10 @@ CORS(app, resources={r"*": {"origins": '172.30.1.100:8080'}}, supports_credentia
 class user(Resource):
     @jwt_required()
     def get(self):
-        # with token:
-        return make_response(to_json(core.find_user_by_id(get_jwt_identity())), 200)
-        #   return user information (only for the teacher)
+        # TODO
+        # Get all student's info
+        # return user information (only for the teacher)
+        return
 
     def post(self):
         args = argparser.user()  # Parse post data
@@ -83,6 +84,21 @@ class user(Resource):
 
         return response
 
+    # TODO
+    # update information as given
+    def put(self):
+        args = argparser.user()
+        core.updateUser(args)
+
+
+class user_(Resource):
+    # TODO
+    def get(self, id):
+        return make_response(to_json(core.find_user_by_id(get_jwt_identity())), 200)
+
+    def put(self, id):
+        return
+
 
 class verification_token(Resource):
     # user authentication으로 변경하는게 통일성 있을듯 함
@@ -102,7 +118,6 @@ class book(Resource):
 api.add_resource(user, "/api/user")
 api.add_resource(verification_token, "/api/verification/token")
 api.add_resource(book, "/api/book")
-
 # @app.before_request
 # def before_request():
 #     if request.url.startswith('http://'):
