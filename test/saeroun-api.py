@@ -114,10 +114,15 @@ class book(Resource):
     def get(self):
         return core.findAllBooks()
 
-
+class word(Resource):
+    @jwt_required()
+    def get(self, book_id):
+        return core.getAllWords(book_id)
+    
 api.add_resource(user, "/api/user")
 api.add_resource(verification_token, "/api/verification/token")
 api.add_resource(book, "/api/book")
+api.add_resource(word, "/api/book/<book_id>")
 # @app.before_request
 # def before_request():
 #     if request.url.startswith('http://'):

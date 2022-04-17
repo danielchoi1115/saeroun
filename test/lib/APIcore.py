@@ -28,17 +28,21 @@ class APIcore:
     def isPasswordCorrect(self, target, source):
         return Bcrypter.validate_password(target, source)
 
-    def findAllBooks(self):
-        # find every books containing its chapters
-        return self.mongo.mongo_query(collection='book', query_type='find_all', data={}, projection={'book_name': True, 'book_code': True, 'no_chapter': True})
-
     def updateUser(self, id='self', body=None):
         # self update
         if id == 'self':
             # Change my info
             print('Update user info')
-        
+
         # teacher changing student's account info
         else:
             user = self.find_user_by_id(id)
             # then change information given by kwargs
+
+    def findAllBooks(self):
+        # find every books containing its chapters
+        return self.mongo.mongo_query(collection='book', query_type='find_all', data={}, projection={'book_name': True, 'book_code': True, 'no_chapter': True})
+
+    def getAllBooks(self, book_id):
+        # find every books containing its chapters
+        return
