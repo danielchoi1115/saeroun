@@ -26,3 +26,8 @@ test.py
 apitest.py
 .node_repl_history
 .vscode
+bootstrap-5.0.1-dist/
+splide.js
+bootstrap_5_0_1.js
+jquery.3.6.0.min.js
+web/html/css/slide.css
